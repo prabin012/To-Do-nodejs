@@ -1,55 +1,29 @@
 import  express  from "express";
 import { User } from "../models/Schema.js";
+import {addUser, login, register, searchUser, userAdd } from "../controllers/user.js";
+
 
 const router =express.Router();
 
+
 // send data to backend  api
-router.get('/add', async(req , res)=>{
-    const user = await User.create({
-        name : "prabon",
-        email : "kumarprabin12@gmail.com",
-        password : "prabin12"
-    })
-    res.json({
-        success : true,
-        message : "register Successful"
-    })
-    console.log(user);
-    console.log("sucessful creeate")
-})
+router.get('/add', userAdd);
 
 // get data from post man or form from frontend api
 
-router.post('/data', async(req, res)=>{
-    const { name, email , password} = req.body;
+router.post('/register',register );
 
-    const data =await User.create({
-        name,
-        email,
-        password
-    });
-  
-    res.status(201).json({
-        success :true,
-        message: "register successfull"
-    });
-    console.log(data);
-})
+// login route api
 
+router.post('/login',login );
+
+
+// get data from post man or form from frontend api
+
+router.post('/data',addUser );
 
 // search data fro backed api 
 
-router.get('/getusers', async(req, res)=>{
-
-    const { id } = req.body;
-    const users = await User.findById(id);
-    res.json({
-        success: true,
-        users
-    })
-    console.log("successful get the user");
-    console.log(users);
-
-})
+router.get('/getusers',searchUser);
 
 export default router;
