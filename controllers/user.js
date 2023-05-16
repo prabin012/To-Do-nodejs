@@ -1,5 +1,6 @@
 import { User } from "../models/Schema.js";
 import { falsereturn, features } from "../utils/features.js";
+import bcrypt from "bcrypt";
 
 
 //Registger api
@@ -13,10 +14,12 @@ export const register = async(req, res)=>{
        return falsereturn(res,`false`,`user already exist`);
         
     }
+    // to conver the password in hash form
+    const hashPasswpord = await bcrypt.hash(password, 10);
     await User.create({
         name, 
         email,
-        password
+        password:hashPasswpord
     });
     
     features(res,`registation successfull`,201,true);
@@ -33,13 +36,15 @@ export const login = async(req, res)=>{
         console.log("didn't find user");
         return falsereturn(res,`false`,`Enter valid email`);
     }
-    const isMatch = await User.findOne({password});
+    const isMatch = await bcrypt.compare(password, users.password);
     if(!isMatch){
+        console.log(isMatch);
         console.log("wrong email and password");
         return falsereturn(res,`false`,`Enter correct password`);
     }
     features(res,`welcome,${users.name}`, 201,true);
     console.log("successdful login, \n Welcome, ", users.name);
+    
 };
 
 
